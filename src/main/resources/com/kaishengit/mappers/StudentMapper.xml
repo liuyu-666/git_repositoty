@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.entity.StudentMapper">
+    <resultMap type="Student" id="StudentResult">
+        <id property="id" column="id" />
+        <result  property="name" column="name" />
+        <result  property="email" column="email" />
+        <result  property="dob" column="dob" />
+    </resultMap>
+    <select id="findAllStudents" resultMap="StudentResult">
+        select * from t_students
+    </select>
+    <select id="findStudentById" parameterType="int" resultType="Student">
+        select id,name,email,dob
+        from t_students where id=#{id}
+    </select>
+    <insert id="insertStudent" parameterType="Student">
+        insert into t_students(name,email,dob) values (#{name},#{email},#{dob})
+    </insert>
+</mapper>
