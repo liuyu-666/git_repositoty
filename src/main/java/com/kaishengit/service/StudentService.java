@@ -11,7 +11,7 @@ import java.util.List;
 
 public class StudentService {
     private Logger logger = LoggerFactory.getLogger(StudentService.class);
-    private SqlSession sqlSession = MyBatisSqlSessionFactory.OpenSession();
+    private SqlSession sqlSession = MyBatisSqlSessionFactory.openSession();
     private   StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
 
     public List<Student> findAllStudents(){
@@ -21,6 +21,23 @@ public class StudentService {
             sqlSession.close();
         }
 
+    }
+    public void deleteStudentById(int id) {
+        try{
+            studentMapper.deleteStudentById(id);
+            sqlSession.commit();
+        }finally {
+            sqlSession.close();
+        }
+    }
+
+    public void updateStudent(Student student){
+        try{
+            studentMapper.updateStudent(student);
+            sqlSession.commit();
+        }finally {
+            sqlSession.close();
+        }
     }
 
     public Student findStudentById(int id){

@@ -18,8 +18,8 @@ public class MyBatisSqlSessionFactory {
     private static SqlSessionFactory sqlSessionFactory;
     public static SqlSessionFactory getSqlSessionFactory() {
         if (sqlSessionFactory == null) {
-            InputStream inputStream;
-            try {
+                InputStream inputStream;
+                try {
                 inputStream = Resources.getResourceAsStream("mybatis-config.xml");
 
                 sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
@@ -31,7 +31,8 @@ public class MyBatisSqlSessionFactory {
         return sqlSessionFactory;
     }
 
-    public static SqlSession OpenSession(){
+    public static SqlSession openSession(){
+
         return getSqlSessionFactory().openSession();
     }
 
