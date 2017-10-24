@@ -1,7 +1,7 @@
 package com.kaishengit.service;
 
 import com.kaishengit.entity.Student;
-import com.kaishengit.entity.StudentMapper;
+import com.kaishengit.mapper.StudentMapper;
 import com.kaishengit.util.MyBatisSqlSessionFactory;
 import org.apache.ibatis.session.SqlSession;
 import org.slf4j.Logger;
@@ -15,6 +15,7 @@ public class StudentService {
     private   StudentMapper studentMapper = sqlSession.getMapper(StudentMapper.class);
 
     public List<Student> findAllStudents(){
+
         try {
             return studentMapper.findAllStudents();
         } finally {

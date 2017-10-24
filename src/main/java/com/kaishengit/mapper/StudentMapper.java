@@ -1,4 +1,6 @@
-package com.kaishengit.entity;
+package com.kaishengit.mapper;
+
+import com.kaishengit.entity.Student;
 
 import java.util.List;
 
