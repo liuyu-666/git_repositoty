@@ -10,9 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /*
+* Demo Class
 *
 * @author liuyu
-* @date 17/10/22
+* @date 2017/10/22
 * */
 public class MyBatisSqlSessionFactory {
     private static SqlSessionFactory sqlSessionFactory;

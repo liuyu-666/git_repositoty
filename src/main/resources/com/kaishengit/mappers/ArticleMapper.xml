@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.kaishengit.mapper.ArticleMapper">
+
+    <resultMap id="articleMap" type="article">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+
+        <collection property="labelList" ofType="label">
+            <id property="id" column="lid"/>
+            <result column="name" property="name"/>
+        </collection>
+    </resultMap>
+
+    <select id="findArticleByIdWithLabel" resultMap="articleMap">
+        SELECT
+            a.id,
+            a.title,
+            l.id as lid,
+            l.`name`
+        FROM
+            t_article a,
+            t_label l,
+            t_article_label al
+        WHERE
+            a.id = al.aid
+            AND al.lid = l.id
+            AND a.id = #{id}
+    </select>
+
+</mapper>

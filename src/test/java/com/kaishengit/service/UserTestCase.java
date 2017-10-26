@@ -57,4 +57,5 @@ public class UserTestCase {
         User user = userMapper.findUserWithDept(2);
         System.out.println(user);
     }
+
 }

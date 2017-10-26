@@ -23,5 +23,6 @@
     <mappers>
         <mapper resource="com/kaishengit/mappers/StudentMapper.xml" />
         <mapper resource="com/kaishengit/mappers/UserMapper.xml"/>
+        <mapper resource="com/kaishengit/mappers/ArticleMapper.xml"/>
     </mappers>
 </configuration>
