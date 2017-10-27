@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+   <!--连接数据库JAR包位置-->
+    <classPathEntry location="E:\localRepository\mysql\mysql-connector-java\5.1.6\mysql-connector-java-5.1.6.jar"/>
+    <context id="myConfig" targetRuntime="MyBatis3">
+        <!--去掉自动注释-->
+        <commentGenerator>
+            <property name="suppressAllComments" value="true"/>
+            <property name="suppressDate" value="true"/>
+        </commentGenerator>
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql:///blog?useSSL=false" userId="root" password="123321"/>
+        <!--实体类(POJO)-->
+        <javaModelGenerator targetPackage="com.kaishengit.entity" targetProject="src/main/java"/>
+        <!--XML映射文件mapper-->
+        <sqlMapGenerator targetPackage="com.kaishengit.mappers" targetProject="src/main/resources"/>
+        <!--mapper接口-->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.kaishengit.mapper" targetProject="src/main/java"/>
+
+        <!--对应表名-->
+        <table tableName="t_article" domainObjectName="Article" enableSelectByExample="true"/>
+    </context>
+</generatorConfiguration>

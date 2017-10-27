@@ -1,16 +1,37 @@
 package com.kaishengit.mapper;
 
 import com.kaishengit.entity.Article;
+import com.kaishengit.entity.ArticleExample;
+import com.kaishengit.entity.ArticleWithBLOBs;
+import java.util.List;
+import org.apache.ibatis.annotations.Param;
 
-/**
- * @author liuyu
- * @date 2017/10/26
- */
 public interface ArticleMapper {
-    /**
-     * 通过ID查询带有LabelList的Article对象
-     * @param id
-     * @return Article
-     */
-    Article findArticleByIdWithLabel(int id);
+    long countByExample(ArticleExample example);
+
+    int deleteByExample(ArticleExample example);
+
+    int deleteByPrimaryKey(Integer id);
+
+    int insert(ArticleWithBLOBs record);
+
+    int insertSelective(ArticleWithBLOBs record);
+
+    List<ArticleWithBLOBs> selectByExampleWithBLOBs(ArticleExample example);
+
+    List<Article> selectByExample(ArticleExample example);
+
+    ArticleWithBLOBs selectByPrimaryKey(Integer id);
+
+    int updateByExampleSelective(@Param("record") ArticleWithBLOBs record, @Param("example") ArticleExample example);
+
+    int updateByExampleWithBLOBs(@Param("record") ArticleWithBLOBs record, @Param("example") ArticleExample example);
+
+    int updateByExample(@Param("record") Article record, @Param("example") ArticleExample example);
+
+    int updateByPrimaryKeySelective(ArticleWithBLOBs record);
+
+    int updateByPrimaryKeyWithBLOBs(ArticleWithBLOBs record);
+
+    int updateByPrimaryKey(Article record);
 }

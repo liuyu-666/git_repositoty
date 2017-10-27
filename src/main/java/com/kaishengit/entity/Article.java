@@ -1,38 +1,27 @@
 package com.kaishengit.entity;
 
-import java.util.List;
+import java.util.Date;
 
-/**
- * @author liuyu
- * @date 2017/10/26
- */
 public class Article {
-    private int id;
+    private Integer id;
+
     private String title;
-    private List<Label> labelList;
 
-    @Override
-    public String toString() {
-        return "Article{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", labelList=" + labelList +
-                '}';
-    }
+    private Date createtime;
 
-    public List<Label> getLabelList() {
-        return labelList;
-    }
+    private Integer scannum;
 
-    public void setLabelList(List<Label> labelList) {
-        this.labelList = labelList;
-    }
+    private Integer replynum;
 
-    public int getId() {
+    private Date lastreplytime;
+
+    private Integer nodeid;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -42,5 +31,45 @@ public class Article {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public Date getCreatetime() {
+        return createtime;
+    }
+
+    public void setCreatetime(Date createtime) {
+        this.createtime = createtime;
+    }
+
+    public Integer getScannum() {
+        return scannum;
+    }
+
+    public void setScannum(Integer scannum) {
+        this.scannum = scannum;
+    }
+
+    public Integer getReplynum() {
+        return replynum;
+    }
+
+    public void setReplynum(Integer replynum) {
+        this.replynum = replynum;
+    }
+
+    public Date getLastreplytime() {
+        return lastreplytime;
+    }
+
+    public void setLastreplytime(Date lastreplytime) {
+        this.lastreplytime = lastreplytime;
+    }
+
+    public Integer getNodeid() {
+        return nodeid;
+    }
+
+    public void setNodeid(Integer nodeid) {
+        this.nodeid = nodeid;
     }
 }

@@ -1,31 +1,668 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.kaishengit.mapper.ArticleMapper">
-
-    <resultMap id="articleMap" type="article">
-        <id column="id" property="id"/>
-        <result column="title" property="title"/>
-
-        <collection property="labelList" ofType="label">
-            <id property="id" column="lid"/>
-            <result column="name" property="name"/>
-        </collection>
-    </resultMap>
-
-    <select id="findArticleByIdWithLabel" resultMap="articleMap">
-        SELECT
-            a.id,
-            a.title,
-            l.id as lid,
-            l.`name`
-        FROM
-            t_article a,
-            t_label l,
-            t_article_label al
-        WHERE
-            a.id = al.aid
-            AND al.lid = l.id
-            AND a.id = #{id}
-    </select>
-
+  <resultMap id="BaseResultMap" type="com.kaishengit.entity.Article">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="scannum" jdbcType="INTEGER" property="scannum" />
+    <result column="replynum" jdbcType="INTEGER" property="replynum" />
+    <result column="lastreplytime" jdbcType="TIMESTAMP" property="lastreplytime" />
+    <result column="nodeid" jdbcType="INTEGER" property="nodeid" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kaishengit.entity.ArticleWithBLOBs">
+    <result column="simplecontent" jdbcType="LONGVARCHAR" property="simplecontent" />
+    <result column="picture" jdbcType="LONGVARCHAR" property="picture" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, title, createtime, scannum, replynum, lastreplytime, nodeid
+  </sql>
+  <sql id="Blob_Column_List">
+    simplecontent, picture, content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.kaishengit.entity.ArticleExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.kaishengit.entity.ArticleExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_article
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_article
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.kaishengit.entity.ArticleExample">
+    delete from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    insert into t_article (id, title, createtime, 
+      scannum, replynum, lastreplytime, 
+      nodeid, simplecontent, picture, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{scannum,jdbcType=INTEGER}, #{replynum,jdbcType=INTEGER}, #{lastreplytime,jdbcType=TIMESTAMP}, 
+      #{nodeid,jdbcType=INTEGER}, #{simplecontent,jdbcType=LONGVARCHAR}, #{picture,jdbcType=LONGVARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    insert into t_article
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="scannum != null">
+        scannum,
+      </if>
+      <if test="replynum != null">
+        replynum,
+      </if>
+      <if test="lastreplytime != null">
+        lastreplytime,
+      </if>
+      <if test="nodeid != null">
+        nodeid,
+      </if>
+      <if test="simplecontent != null">
+        simplecontent,
+      </if>
+      <if test="picture != null">
+        picture,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scannum != null">
+        #{scannum,jdbcType=INTEGER},
+      </if>
+      <if test="replynum != null">
+        #{replynum,jdbcType=INTEGER},
+      </if>
+      <if test="lastreplytime != null">
+        #{lastreplytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nodeid != null">
+        #{nodeid,jdbcType=INTEGER},
+      </if>
+      <if test="simplecontent != null">
+        #{simplecontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.kaishengit.entity.ArticleExample" resultType="java.lang.Long">
+    select count(*) from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_article
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.scannum != null">
+        scannum = #{record.scannum,jdbcType=INTEGER},
+      </if>
+      <if test="record.replynum != null">
+        replynum = #{record.replynum,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastreplytime != null">
+        lastreplytime = #{record.lastreplytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.nodeid != null">
+        nodeid = #{record.nodeid,jdbcType=INTEGER},
+      </if>
+      <if test="record.simplecontent != null">
+        simplecontent = #{record.simplecontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.picture != null">
+        picture = #{record.picture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update t_article
+    set id = #{record.id,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      scannum = #{record.scannum,jdbcType=INTEGER},
+      replynum = #{record.replynum,jdbcType=INTEGER},
+      lastreplytime = #{record.lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{record.nodeid,jdbcType=INTEGER},
+      simplecontent = #{record.simplecontent,jdbcType=LONGVARCHAR},
+      picture = #{record.picture,jdbcType=LONGVARCHAR},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_article
+    set id = #{record.id,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      scannum = #{record.scannum,jdbcType=INTEGER},
+      replynum = #{record.replynum,jdbcType=INTEGER},
+      lastreplytime = #{record.lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{record.nodeid,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    update t_article
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scannum != null">
+        scannum = #{scannum,jdbcType=INTEGER},
+      </if>
+      <if test="replynum != null">
+        replynum = #{replynum,jdbcType=INTEGER},
+      </if>
+      <if test="lastreplytime != null">
+        lastreplytime = #{lastreplytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nodeid != null">
+        nodeid = #{nodeid,jdbcType=INTEGER},
+      </if>
+      <if test="simplecontent != null">
+        simplecontent = #{simplecontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    update t_article
+    set title = #{title,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      scannum = #{scannum,jdbcType=INTEGER},
+      replynum = #{replynum,jdbcType=INTEGER},
+      lastreplytime = #{lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{nodeid,jdbcType=INTEGER},
+      simplecontent = #{simplecontent,jdbcType=LONGVARCHAR},
+      picture = #{picture,jdbcType=LONGVARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kaishengit.entity.Article">
+    update t_article
+    set title = #{title,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      scannum = #{scannum,jdbcType=INTEGER},
+      replynum = #{replynum,jdbcType=INTEGER},
+      lastreplytime = #{lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{nodeid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <resultMap id="BaseResultMap" type="com.kaishengit.entity.Article">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="createtime" jdbcType="TIMESTAMP" property="createtime" />
+    <result column="scannum" jdbcType="INTEGER" property="scannum" />
+    <result column="replynum" jdbcType="INTEGER" property="replynum" />
+    <result column="lastreplytime" jdbcType="TIMESTAMP" property="lastreplytime" />
+    <result column="nodeid" jdbcType="INTEGER" property="nodeid" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.kaishengit.entity.ArticleWithBLOBs">
+    <result column="simplecontent" jdbcType="LONGVARCHAR" property="simplecontent" />
+    <result column="picture" jdbcType="LONGVARCHAR" property="picture" />
+    <result column="content" jdbcType="LONGVARCHAR" property="content" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, title, createtime, scannum, replynum, lastreplytime, nodeid
+  </sql>
+  <sql id="Blob_Column_List">
+    simplecontent, picture, content
+  </sql>
+  <select id="selectByExampleWithBLOBs" parameterType="com.kaishengit.entity.ArticleExample" resultMap="ResultMapWithBLOBs">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" parameterType="com.kaishengit.entity.ArticleExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from t_article
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from t_article
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.kaishengit.entity.ArticleExample">
+    delete from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    insert into t_article (id, title, createtime, 
+      scannum, replynum, lastreplytime, 
+      nodeid, simplecontent, picture, 
+      content)
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{createtime,jdbcType=TIMESTAMP}, 
+      #{scannum,jdbcType=INTEGER}, #{replynum,jdbcType=INTEGER}, #{lastreplytime,jdbcType=TIMESTAMP}, 
+      #{nodeid,jdbcType=INTEGER}, #{simplecontent,jdbcType=LONGVARCHAR}, #{picture,jdbcType=LONGVARCHAR}, 
+      #{content,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    insert into t_article
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="createtime != null">
+        createtime,
+      </if>
+      <if test="scannum != null">
+        scannum,
+      </if>
+      <if test="replynum != null">
+        replynum,
+      </if>
+      <if test="lastreplytime != null">
+        lastreplytime,
+      </if>
+      <if test="nodeid != null">
+        nodeid,
+      </if>
+      <if test="simplecontent != null">
+        simplecontent,
+      </if>
+      <if test="picture != null">
+        picture,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scannum != null">
+        #{scannum,jdbcType=INTEGER},
+      </if>
+      <if test="replynum != null">
+        #{replynum,jdbcType=INTEGER},
+      </if>
+      <if test="lastreplytime != null">
+        #{lastreplytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nodeid != null">
+        #{nodeid,jdbcType=INTEGER},
+      </if>
+      <if test="simplecontent != null">
+        #{simplecontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picture != null">
+        #{picture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.kaishengit.entity.ArticleExample" resultType="java.lang.Long">
+    select count(*) from t_article
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update t_article
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createtime != null">
+        createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.scannum != null">
+        scannum = #{record.scannum,jdbcType=INTEGER},
+      </if>
+      <if test="record.replynum != null">
+        replynum = #{record.replynum,jdbcType=INTEGER},
+      </if>
+      <if test="record.lastreplytime != null">
+        lastreplytime = #{record.lastreplytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.nodeid != null">
+        nodeid = #{record.nodeid,jdbcType=INTEGER},
+      </if>
+      <if test="record.simplecontent != null">
+        simplecontent = #{record.simplecontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.picture != null">
+        picture = #{record.picture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="record.content != null">
+        content = #{record.content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map">
+    update t_article
+    set id = #{record.id,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      scannum = #{record.scannum,jdbcType=INTEGER},
+      replynum = #{record.replynum,jdbcType=INTEGER},
+      lastreplytime = #{record.lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{record.nodeid,jdbcType=INTEGER},
+      simplecontent = #{record.simplecontent,jdbcType=LONGVARCHAR},
+      picture = #{record.picture,jdbcType=LONGVARCHAR},
+      content = #{record.content,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update t_article
+    set id = #{record.id,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=VARCHAR},
+      createtime = #{record.createtime,jdbcType=TIMESTAMP},
+      scannum = #{record.scannum,jdbcType=INTEGER},
+      replynum = #{record.replynum,jdbcType=INTEGER},
+      lastreplytime = #{record.lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{record.nodeid,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    update t_article
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="createtime != null">
+        createtime = #{createtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="scannum != null">
+        scannum = #{scannum,jdbcType=INTEGER},
+      </if>
+      <if test="replynum != null">
+        replynum = #{replynum,jdbcType=INTEGER},
+      </if>
+      <if test="lastreplytime != null">
+        lastreplytime = #{lastreplytime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="nodeid != null">
+        nodeid = #{nodeid,jdbcType=INTEGER},
+      </if>
+      <if test="simplecontent != null">
+        simplecontent = #{simplecontent,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="picture != null">
+        picture = #{picture,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.kaishengit.entity.ArticleWithBLOBs">
+    update t_article
+    set title = #{title,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      scannum = #{scannum,jdbcType=INTEGER},
+      replynum = #{replynum,jdbcType=INTEGER},
+      lastreplytime = #{lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{nodeid,jdbcType=INTEGER},
+      simplecontent = #{simplecontent,jdbcType=LONGVARCHAR},
+      picture = #{picture,jdbcType=LONGVARCHAR},
+      content = #{content,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.kaishengit.entity.Article">
+    update t_article
+    set title = #{title,jdbcType=VARCHAR},
+      createtime = #{createtime,jdbcType=TIMESTAMP},
+      scannum = #{scannum,jdbcType=INTEGER},
+      replynum = #{replynum,jdbcType=INTEGER},
+      lastreplytime = #{lastreplytime,jdbcType=TIMESTAMP},
+      nodeid = #{nodeid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
 </mapper>
